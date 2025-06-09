@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemText,
   Paper,
+  ListItemButton,
 } from '@mui/material';
 
 function UsuariosList() {
@@ -21,7 +22,7 @@ function UsuariosList() {
   }, []);
 
   const handleClick = (id) => {
-     window.open(`/dados/${id}`, '_blank');
+    window.open(`/dados/${id}`, '_blank');
   };
 
   return (
@@ -32,15 +33,13 @@ function UsuariosList() {
       <Paper>
         <List>
           {usuarios.map((usuario) => (
-            <ListItem
-              key={usuario.id}
-              button
-              onClick={() => handleClick(usuario.id)}
-            >
-              <ListItemText
-                primary={usuario.nome}
-                secondary={usuario.email}
-              />
+            <ListItem key={usuario.id} disablePadding>
+              <ListItemButton onClick={() => handleClick(usuario.id)}>
+                <ListItemText
+                  primary={usuario.nome}
+                  secondary={usuario.email}
+                />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
