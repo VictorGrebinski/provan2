@@ -21,7 +21,7 @@ function UsuariosList() {
   }, []);
 
   const handleClick = (id) => {
-    navigate(`/dados/${id}`);
+     window.open(`/dados/${id}`, '_blank');
   };
 
   return (
