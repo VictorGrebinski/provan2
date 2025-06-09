@@ -1,25 +1,52 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { buscarUsuarioPorId } from "../api";
-import { Typography, Card, CardContent } from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import { buscarUsuarios } from '../api';
+import { useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+} from '@mui/material';
 
-export default function DadosUsuario() {
-  const { id } = useParams();
-  const [usuario, setUsuario] = useState(null);
+function UsuariosList() {
+  const [usuarios, setUsuarios] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    buscarUsuarioPorId(id).then(setUsuario);
-  }, [id]);
+    buscarUsuarios()
+      .then(setUsuarios)
+      .catch((err) => console.error(err));
+  }, []);
 
-  if (!usuario) return <Typography>Carregando...</Typography>;
+  const handleClick = (id) => {
+    navigate(`/dados/${id}`);
+  };
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h5">{usuario.nome}</Typography>
-        <Typography>Email: {usuario.email}</Typography>
-        <Typography>ID: {usuario.id}</Typography>
-      </CardContent>
-    </Card>
+    <Container maxWidth="sm">
+      <Typography variant="h4" gutterBottom align="center" sx={{ mt: 4 }}>
+        Lista de Usuários
+      </Typography>
+      <Paper>
+        <List>
+          {usuarios.map((usuario) => (
+            <ListItem
+              key={usuario.id}
+              button
+              onClick={() => handleClick(usuario.id)}
+            >
+              <ListItemText
+                primary={usuario.nome}
+                secondary={usuario.email}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+    </Container>
   );
 }
+
+export default UsuariosList;

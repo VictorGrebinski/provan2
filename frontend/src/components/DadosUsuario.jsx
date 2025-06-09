@@ -1,26 +1,62 @@
-import { useEffect, useState } from "react";
-import { buscarUsuarios } from "../api";
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { buscarUsuarioPorId } from '../api';
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CircularProgress,
+} from '@mui/material';
 
-export default function UsuariosList() {
-  const [usuarios, setUsuarios] = useState([]);
-  const navigate = useNavigate();
+function DadosUsuario() {
+  const { id } = useParams();
+  const [usuario, setUsuario] = useState(null);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    buscarUsuarios().then(setUsuarios);
-  }, []);
+    buscarUsuarioPorId(id)
+      .then((data) => {
+        setUsuario(data);
+        setCarregando(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setCarregando(false);
+      });
+  }, [id]);
+
+  if (carregando) {
+    return (
+      <Container sx={{ textAlign: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (!usuario) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Typography variant="h6" color="error">
+          Usuário não encontrado
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>Lista de Usuários</Typography>
-      <List>
-        {usuarios.map((user) => (
-          <ListItem button key={user.id} onClick={() => navigate(`/dados/${user.id}`)}>
-            <ListItemText primary={user.nome} secondary={user.email} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Card>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            {usuario.nome}
+          </Typography>
+          <Typography variant="body1">ID: {usuario.id}</Typography>
+          <Typography variant="body1">Email: {usuario.email}</Typography>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
+
+export default DadosUsuario;
